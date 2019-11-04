@@ -94,7 +94,7 @@ other Containers.
 # What Version of Node.js will my Script be Running in?
 
 
-The *node-runner* Container uses Node.js version 12
+The *node-runner* Container uses Node.js version 10
 
 
 
