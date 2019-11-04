@@ -8,7 +8,7 @@ Twitter: @rtweed
 # Background
 
 This repository provides the source Dockerfile and associated script files
-for the rtweed/node-runner Docker Container.
+for the *rtweed/node-runner* Docker Container which is hosted on Docker Hub.
 
 The container provides a means of executing a Node.js script without Node.js
 being physically installed on a Linux server.  Instead, all you need is Docker
@@ -154,7 +154,7 @@ This time you'll see:
 
 You can see that it installed the *moment* module from NPM.  The warnings can be ignored.
 
-If you now look at the folder you mapped, you'll now see that a sub-directory named *node_modules*
+If you now look at the folder you mapped, you'll see that a sub-directory named *node_modules*
 has been created, and it will contain the module(s) you asked it to load.
 
 If you try running your script again, this time it will see that the modules in your *npm_install.json*
@@ -187,9 +187,6 @@ follows:
         };
 
 
-** Note that you cannot *require* external modules outside your *module.exports* function.
-
-
 Now when we run it:
 
         docker run -it --name node-runner --rm -v ~/test:/node -e "node_script=myScript" rtweed/node-runner
@@ -204,9 +201,20 @@ We should see something like:
         *************** Node Runner will now terminate ***************
 
 
+**Note**: you cannot *require* external modules outside your *module.exports* function.
+
+ie the following will NOT be guaranteed to work and may generate a run-time error:
+
+        var moment = require('moment');
+        module.exports = function() {
+          console.log('*** This is my script! ***');
+          console.log('Today is ' + moment().format("YYYY Do MM"));
+        };
+
+
 # How Many Modules can my Script Load?
 
-As many as you like.  Just add them to the array defined by *npm_install.json*
+As many as you like.  Just add them to the array defined by your *npm_install.json* file.
 
 
 # Can I specify a Particular Module Version in my *npm_install.json* file?
@@ -221,7 +229,8 @@ Yes. Simply add the version number after the module name, using @ as the delimit
 # Can I Reset the Node Modules that have been Previously Loaded?
 
 Yes, you can simply delete the *node_modules* directory that was created in the folder you mapped.
-Next time you run the *node-runner* Container, it will reload any modules defined in your
+Next time you run the *node-runner* Container, it will recreate the *node_modules* sub-folder 
+and reload into it any modules defined in your
 *npm_install.json* file.
 
 
