@@ -53,6 +53,10 @@ fs.createFile = function(contentArray, filePath) {
   fs.outputFileSync(filePath, contentArray.join('\n'));
 }
 
+function shell(command) {
+  child_process.execSync(command, {stdio:[0,1,2]});
+}
+
 function installModule(moduleName, modulePath) {
 
   var module_path = '/node';
@@ -145,7 +149,8 @@ var nr = {
   install_module: installModule,
   isNumeric: isNumeric,
   uuid: uuid,
-  transform: transform
+  transform: transform,
+  shell: shell
 };
 
 // try loading any modules required by the script

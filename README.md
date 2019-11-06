@@ -249,7 +249,7 @@ a number of functions and modules that you may find useful in your script, eg:
 - this.uuid: provides access to the [*uuid/v4*](https://www.npmjs.com/package/uuid) module which allows you to create unique UUIDs.
 - this.isNumeric(value): a simple function that returns true if the value is numeric
 - this.installModule(moduleName, path): a function that will install a module from NPM and save it to the specified path
-
+- this.shell(command): execute a bash shell command
 
 
 
