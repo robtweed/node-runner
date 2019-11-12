@@ -94,7 +94,7 @@ other Containers.
 # What Version of Node.js will my Script be Running in?
 
 
-The *node-runner* Container uses Node.js version 10
+The *node-runner* Container uses Node.js version 12
 
 
 
@@ -252,8 +252,43 @@ a number of functions and modules that you may find useful in your script, eg:
 - this.shell(command): execute a bash shell command
 
 
+# Using *node-runner* for Other Node.js Work
 
-## License
+If you modify the *docker run* command as follows:
+
+        docker run -it --name node-runner --rm -v ~/test:/node --entrypoint=/bin/bash rtweed/node-runner
+
+instead of running a script, it will give you shell access to the *node-runner* container, eg:
+
+
+        root@ba1c65c9bb92:/src#
+
+Within this shell environment, you have access to Node.js, eg:
+
+        root@ba1c65c9bb92:/src# node -v
+        v12.13.0
+        root@ba1c65c9bb92:/src# node
+        Welcome to Node.js v12.13.0.
+        Type ".help" for more information.
+        >
+        (To exit, press ^C again or ^D or type .exit)
+        >
+        root@ba1c65c9bb92:/src#
+
+The */node* directory is the host volume you've mapped, so if you create any files on the host, eg
+in our example, in the host's *~/test* folder, they will appear in the Container's */node* directory and will
+be available for you to use.
+
+        root@ba1c65c9bb92:/src# cd /node
+        root@ba1c65c9bb92:/node#
+
+In summary, you can use *node-runner* as a Node.js "scratch pad", to create and run Node.js scripts
+on your host system, without having to install Node.js itself on the host system.  As soon as you
+stop the *node-runner* container, the Node.js environment disappears, but anything in your mapped
+volume persists on the host.
+
+
+# License
 
 ```
  Copyright (c) 2019 M/Gateway Developments Ltd,                           
