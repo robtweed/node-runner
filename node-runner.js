@@ -24,7 +24,7 @@
  |  limitations under the License.                                          |
  ----------------------------------------------------------------------------
 
-  4 November 2019
+  11 November 2019
 
 */
 
@@ -34,6 +34,7 @@ var transform = require('qewd-transform-json').transform;
 var uuid = require('uuid/v4');
 var module_exists = require('module-exists');
 var child_process = require('child_process');
+var tcp = require('tcp-netx');
 
 function isNumeric(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
@@ -95,6 +96,126 @@ function installModule(moduleName, modulePath) {
   }
 }
 
+var requestSync = {
+  parseUrl: function(url) {
+    if (!url || url === '') {
+      return {error: 'url missing or empty'};
+    }
+    if (!url.startsWith('http://') && !url.startsWith('http://')) {
+      return {error: 'Invalid url'};
+    }
+    var pieces = url.split('://');
+    var protocol = pieces[0] + '://'
+    var url = pieces[1];
+    var query;
+    var queryString;
+    if (url.includes('?')) {
+      pieces = url.split('?');
+      query = pieces[1];
+      if (query) {
+        queryString = query;
+        var nvps = query.split('&');
+        query = {};
+        nvps.forEach(function(nvp) {
+          var pieces = nvp.split('=');
+          query[pieces[0]] = pieces[1];
+        });
+      }
+      url = pieces[0]
+    }
+    var path = '/';
+    if (url.includes('/')) {
+      pieces = url.split('/');
+      url = pieces[0];
+      pieces.shift(); // remove 1st piece
+      path = '/' + pieces.join('/');
+    }
+    var hostString = url;
+    var port;
+    var host = url;
+    if (url.includes(':')) {
+      pieces = url.split(':');
+      port = pieces[1];
+      host = pieces[0];
+    }
+    return {
+      protocol: protocol,
+      hostString: hostString,
+      host: host,
+      port: port,
+      path: path,
+      query: query,
+      queryString: queryString
+    }
+  },
+  connect: function(url) {
+    var urlObj = this.parseUrl(url);
+    if (urlObj.error) {
+      return urlObj;
+    }
+    //console.log(urlObj);
+    var db = new tcp.server(urlObj.host, urlObj.port);
+    return {
+      db: db,
+      status: db.connect(),
+      url: urlObj
+    };
+  },
+  send: function(params) {
+    if (!params) {
+      return {error: 'No options defined'};
+    }
+    var db = params.db;
+    if (!db) {
+      var status = this.connect(params.url);
+      if (!status.status.ok) {
+        return status;
+      }
+      db = status.db;
+    }
+
+    if (!params.method || params.method === '') {
+      return {error: 'No method defined'};
+    }
+    var allowed = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
+    params.method = params.method.toUpperCase();
+    if (!allowed.includes(params.method)) {
+      return {error: 'Invalid method'};
+    }
+    var url = status.url;
+
+    var headers = params.method + ' ' + url.path + ' HTTP/1.1';
+    headers = headers + '\r\n' + 'Host: ' + url.hostString;
+
+    if (params.headers) {
+      for (var name in params.headers) {
+        headers = headers + '\r\n' + name + ': ' + params.headers[name];
+      }
+    }
+
+    if (params.data) {
+      headers = headers + '\r\n' + 'content-length: ' + params.data.length;
+    }
+    headers = headers + '\r\n' + 'Connection: close';
+    headers = headers + '\r\n' + '\r\n';
+
+    var payload = {
+      headers: headers,
+      content: params.data
+    };
+
+    if (params.log) {
+      console.log('payload: ' + JSON.stringify(payload, null, 2));
+    }
+
+    var response = db.http(payload);
+    if (!params.db) {
+      db.disconnect();
+    }
+    return response;
+  }
+}
+
 
 console.log('*************** Welcome to Node Runner ***************');
 
@@ -150,7 +271,9 @@ var nr = {
   isNumeric: isNumeric,
   uuid: uuid,
   transform: transform,
-  shell: shell
+  shell: shell,
+  tcp: tcp,
+  requestSync: requestSync
 };
 
 // try loading any modules required by the script
