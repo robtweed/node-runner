@@ -23,7 +23,7 @@ as JavaScript text files on your host server.
 
         docker pull rtweed/node-runner-arm64
 
-    and add *-arm64* to all references to the *rtweed/node-runner* Container/Image name in this documentation.
+  and add *-arm64* to all references to the *rtweed/node-runner* Container/Image name in this documentation.
 
 # Getting Started with the *node-runner* Container
 
