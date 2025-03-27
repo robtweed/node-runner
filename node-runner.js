@@ -3,7 +3,7 @@
  ----------------------------------------------------------------------------
  | node-runner: Dockerised Node.js Script Runner                            |
  |                                                                          |
- | Copyright (c) 2019 M/Gateway Developments Ltd,                           |
+ | Copyright (c) 2019-25 M/Gateway Developments Ltd,                        |
  | Redhill, Surrey UK.                                                      |
  | All rights reserved.                                                     |
  |                                                                          |
@@ -24,14 +24,15 @@
  |  limitations under the License.                                          |
  ----------------------------------------------------------------------------
 
-  11 November 2019
+  27 March 2025
 
 */
 
 var ask = require('readline-sync');
 var fs = require('fs-extra');
 var transform = require('qewd-transform-json').transform;
-var uuid = require('uuid/v4');
+//var uuid = require('uuid/v4');
+const { v4: uuid } = require('uuid');
 var module_exists = require('module-exists');
 var child_process = require('child_process');
 var tcp = require('tcp-netx');

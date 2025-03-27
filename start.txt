@@ -1,0 +1,18 @@
+To build from source:
+
+  Clone repository:
+
+    git clone https://github.com/robtweed/node-runner
+
+  Switch to repository directory:
+
+    cd node-runner
+
+  Build:
+
+     docker build -t node-runner --progress plain .
+
+
+To run as a persistent container: (mapping a directory ~/node-runner/node)
+
+docker run -it --name node-runner --rm -v ~/node-runner/node:/node --entrypoint=/bin/bash node-runner

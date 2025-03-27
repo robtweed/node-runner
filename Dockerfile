@@ -1,5 +1,4 @@
-#FROM node:10-stretch
-FROM node:12-stretch
+FROM node:22-bookworm
 
 WORKDIR /src
 

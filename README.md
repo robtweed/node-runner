@@ -1,7 +1,7 @@
 # node-runner: Simple Dockerised Node.js Script Runner
  
 Rob Tweed <rtweed@mgateway.com>  
-4 November 2019, M/Gateway Developments Ltd [http://www.mgateway.com](http://www.mgateway.com)  
+27 March 2025, MGateway Ltd [http://www.mgateway.com](http://www.mgateway.com)  
 
 Twitter: @rtweed
 
@@ -18,6 +18,12 @@ as JavaScript text files on your host server.
 # Installing the *node-runner* Container
 
         docker pull rtweed/node-runner
+
+  Note: for ARM64 systems such as the Raspberry Pi or Mac:
+
+        docker pull rtweed/node-runner-arm64
+
+    and add *-arm64* to all references to the *rtweed/node-runner* Container/Image name in this documentation.
 
 # Getting Started with the *node-runner* Container
 
@@ -291,7 +297,7 @@ volume persists on the host.
 # License
 
 ```
- Copyright (c) 2019 M/Gateway Developments Ltd,                           
+ Copyright (c) 2019-25 MGateway Ltd,                           
  Redhill, Surrey UK.                                                      
  All rights reserved.                                                     
                                                                            
